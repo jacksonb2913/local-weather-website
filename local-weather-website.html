@@ -1,0 +1,206 @@
+<head>
+<style>
+
+html{
+background-color:#ff6d6d;
+}
+
+.refresh{
+  height:30px;
+  width:70px;
+  border-radius:30px;
+  border:none;
+  
+}
+
+/*////////////*/
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  float:right;
+  margin:1rem; 
+  top:0;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+ 	top: 9px;
+	left: 9px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}
+
+.extra{
+  top:8;
+}
+</style>
+</head>
+<body>
+
+
+<div style = "margin-right:3rem;">
+<label class="container">F°
+  <input id = "f" type="radio" checked name="unit" onclick = 'apiCall()' value = "F">
+  <span class="checkmark"></span>
+</label>
+<label class="container">C°
+  <input id "c" type="radio" name="unit"  onclick = 'apiCall()' value = "C">
+  <span class="checkmark"></span>
+</label>
+</div>
+
+  
+<center>
+<h1>Local Weather App</h1>
+
+<h2> 
+  <span id = 'city'></span>
+  <span id ='region'></span>
+  <span id ='country'></span>
+</h2>      
+</center>
+
+ <body onload= "apiCall()">
+  
+  <div class= "extra">
+   <h4>Current Date and Time: 
+     <span id = 'time'></span></h4>
+   
+   <h4>Last Updated:
+     <span id = 'last'></span></h4>
+   </div>
+  <div class = 'important'>
+   <center>
+  <div id = 'icon'></div>      
+  <h2><span id ='desc'></span></h2>  
+  <h2><span id ='temp'></span></h2>
+  <h3> <span id ='humidity'></span> </h3>
+     <button onclick = 'apiCall()' class = 'refresh' id = 'refresh'>Refresh</button>
+ 
+     
+  
+   </body>      
+  
+  
+  
+     
+  
+  
+<footer>
+          
+    <div class = "footerStyle">
+      <p> Made by Bishop Jackson <br>
+        Contact me at <a href = "mailto:bjthedj11">bjthedj11@gmail.com</a>
+      </p>
+  </footer>
+  </div>
+     </div>
+   </div>
+   
+ 
+    
+</html>   
+   
+   
+
+
+
+</body>
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+ //Get Coords
+var lat;
+var long;
+function apiCall(){
+  $(document).ready(function() {
+    
+   navigator.geolocation.getCurrentPosition(function(location) {  
+ //$('#lat').html(location.coords.latitude);
+//$('#long').html(location.coords.longitude);
+   lat = location.coords.latitude;
+     long = location.coords.longitude
+   })
+    
+  $.ajax({ 
+ url: 'https://api.apixu.com/v1/forecast.json?key=13f4dad0729e41d5b7f135142182703&q='+lat+','+long,
+   type:'GET',
+ //dataType: "jsonp",
+  success: function(data) {
+   $('#city').html(data.location.name+', ');
+     $('#time').html(data.location.localtime);
+      $('#region').html(data.location.region+', ');
+     $('#country').html(data.location.country);
+    $('#humidity').html(data.current.humidity+ '% '+'Humidty');
+ 
+    $('#desc').html(data.current.condition.text);
+    $('#icon').html(data.current.condition.icon);
+    $('#last').html(data.current.last_updated);
+    
+    if (document.getElementById('f').checked){
+ document.getElementById('temp').innerHTML = Math.round(data.current.temp_f)+'°'+document.querySelector('input[name="unit"]:checked').value;}
+      
+  
+    else{
+       document.getElementById('temp').innerHTML = Math.round(data.current.temp_c)+'°'+document.querySelector('input[name="unit"]:checked').value;}
+    
+    var icon = 'https:'+data.current.condition.icon;
+    
+document.getElementById('icon').innerHTML = "<img src = '" +icon+ "' " + "alt='" + data.current.condition.text + "'>";  
+    
+  
+  }})})}       
+   
+
+
+ </script>
